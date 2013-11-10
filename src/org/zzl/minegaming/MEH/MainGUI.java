@@ -71,7 +71,7 @@ public class MainGUI extends JFrame
 	public int paneSize = 0;
 	public int initEditorPanePos = -1;
 	
-	public JLabel lblInfo;
+	public static JLabel lblInfo;
 	public JTree mapBanks;
 	public Map loadedMap;
 	private int selectedBank = 0;
@@ -85,6 +85,7 @@ public class MainGUI extends JFrame
 	public JLabel lblBorderHeight;
 	public JLabel lblGlobalTilesetPointer;
 	public MapEditorPanel mapEditorPanel;
+	public TileEditorPanel tileEditorPanel;
 	public MainGUI()
 	{
 		setPreferredSize(new Dimension(800, 800));
@@ -251,6 +252,8 @@ public class MainGUI extends JFrame
 		panelTilesContainer.setPreferredSize(new Dimension(225, 10));
 		panelTilesContainer.setLayout(new BorderLayout(0, 0));
 		
+	
+		
 		JPanel splitterMapTiles = new JPanel();
 		splitterMapTiles.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
 		splitterMapTiles.setPreferredSize(new Dimension(4, 10));
@@ -270,6 +273,16 @@ public class MainGUI extends JFrame
 		panelBorderTilesSplitter.setBackground(SystemColor.controlShadow);
 		panelBorderTilesSplitter.setPreferredSize(new Dimension(10, 1));
 		panelBorderTilesContainer.add(panelBorderTilesSplitter, BorderLayout.SOUTH);
+		
+		tileEditorPanel = new TileEditorPanel();
+		tileEditorPanel.setPreferredSize(new Dimension(512, 512));
+		panelMapTilesContainer.add(tileEditorPanel, BorderLayout.WEST);
+		tileEditorPanel.setLayout(null);
+		tileEditorPanel.setBorder(UIManager.getBorder("SplitPane.border"));
+		
+		
+		
+		
 		
 		JPanel panelMapTiles = new JPanel();
 		panelMapTilesContainer.add(panelMapTiles, BorderLayout.CENTER);
@@ -380,10 +393,15 @@ public class MainGUI extends JFrame
 						lblInfo.setText("Loading map...");
 						loadedMap = new Map(ROMManager.getActiveROM(), BitConverter.shortenPointer(BankLoader.maps[selectedBank].get(selectedMap)));
 						reloadMimeLabels();
-						mapEditorPanel.setGlobalTileset(new Tileset(ROMManager.getActiveROM(), loadedMap.getMapData().globalTileSetPtr));
-						mapEditorPanel.setLocalTileset(new Tileset(ROMManager.getActiveROM(), loadedMap.getMapData().localTileSetPtr));
+						mapEditorPanel.setGlobalTileset(TilesetCache.get(loadedMap.getMapData().globalTileSetPtr));
+						mapEditorPanel.setLocalTileset(TilesetCache.get(loadedMap.getMapData().localTileSetPtr));
 						mapEditorPanel.repaint();
-						lblInfo.setText("Done!");
+						
+						
+						tileEditorPanel.setGlobalTileset(TilesetCache.get(loadedMap.getMapData().globalTileSetPtr));
+						tileEditorPanel.setLocalTileset(TilesetCache.get(loadedMap.getMapData().localTileSetPtr));
+						tileEditorPanel.repaint();
+						
 					}
 				}
 			}
